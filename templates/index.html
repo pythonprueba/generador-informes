@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Informes Médicos</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        .container {
+            max-width: 700px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #4a4a4a;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="date"], textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .radio-group > div {
+            display: flex;
+            gap: 10px;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Generador de Informes Médicos</h1>
+    <form id="informe-form" action="/generar" method="post">
+        <div class="form-group">
+            <label for="nombre">Nombre Completo Paciente:</label>
+            <input type="text" id="nombre" name="nombre">
+        </div>
+        <div class="form-group">
+            <label for="run">RUN:</label>
+            <input type="text" id="run" name="run">
+        </div>
+        <div class="form-group">
+            <label for="fecnac">Fecha Nacimiento:</label>
+            <input type="date" id="fecnac" name="fecnac">
+        </div>
+        <div class="form-group">
+            <label>Tipo de Examen:</label>
+            <div class="radio-group">
+                <div>
+                    <input type="radio" id="tc" name="tipo_examen" value="TC" checked>
+                    <label for="tc">TC</label>
+                    <input type="radio" id="rm" name="tipo_examen" value="RM">
+                    <label for="rm">RM</label>
+                </div>
+                <div>
+                    <input type="radio" id="cerebral" name="region_examen" value="Cerebral" checked>
+                    <label for="cerebral">Cerebral</label>
+                    <input type="radio" id="columna" name="region_examen" value="Columna">
+                    <label for="columna">Columna</label>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="antecedentes">Antecedentes:</label>
+            <textarea id="antecedentes" name="antecedentes"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="hallazgos">Hallazgos:</label>
+            <textarea id="hallazgos" name="hallazgos"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="conclusion">Conclusión:</label>
+            <textarea id="conclusion" name="conclusion"></textarea>
+        </div>
+        <button type="submit">Generar y Descargar Informe</button>
+    </form>
+</div>
+
+</body>
+</html>
