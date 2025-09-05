@@ -1,17 +1,14 @@
 [build]
   command = "pip install -r requirements.txt"
   functions = "functions/"
-  # Usaremos un directorio 'public' para los archivos estáticos.
-  # Netlify copiará el contenido de 'templates' aquí.
-  publish = "public/"
+  # Serviremos los archivos estáticos desde la carpeta 'templates'
+  publish = "templates/"
 
 [functions]
-  included_files = ["plantilla_informe.docx", "generar_informe.py"]
+  # La plantilla es el único archivo externo que la función necesita
+  included_files = ["plantilla_informe.docx"]
 
 [[redirects]]
-  # Esta regla ahora solo se activa si la página solicitada no existe como archivo estático.
-  # Esto permite que /index.html se sirva normalmente.
-  # Las llamadas a la API como /generar serán manejadas por la función.
   from = "/*"
   to = "/.netlify/functions/app/:splat"
   status = 200 # 200 significa que es una reescritura, no una redirección visible.
