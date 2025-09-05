@@ -1,13 +1,11 @@
 from flask import Flask, render_template, request, send_file
 from generar_informe import generar_informe_docx
 import datetime
-import os
- 
-# En el entorno de Netlify, necesitamos una ruta más robusta.
-# LAMBDA_TASK_ROOT es una variable de entorno que apunta a la raíz de la función.
-# Desde ahí, construimos la ruta a la carpeta 'templates' en la raíz del sitio.
-template_dir = os.path.abspath(os.path.join(os.environ.get('LAMBDA_TASK_ROOT', '.'), 'templates'))
-app = Flask(__name__, template_folder=template_dir)
+
+# Le indicamos a Flask que la carpeta 'templates' está en el directorio raíz del proyecto,
+# un nivel por encima de donde se encuentra este script (functions/app/).
+# Esto es necesario para que Netlify Functions encuentre el index.html.
+app = Flask(__name__, template_folder='../../templates')
 
 @app.route('/')
 def index():
