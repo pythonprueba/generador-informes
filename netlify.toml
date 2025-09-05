@@ -1,12 +1,12 @@
 [build]
   command = "pip install -r requirements.txt"
   functions = "functions/"
-  # Serviremos los archivos estáticos desde la carpeta 'templates'
-  publish = "templates/"
+  # Usaremos un directorio 'public' vacío, ya que la función Flask se encarga de todo.
+  publish = "public/"
 
 [functions]
-  # La plantilla es el único archivo externo que la función necesita
-  included_files = ["plantilla_informe.docx"]
+  # Incluimos la plantilla Y la carpeta de templates para que la función pueda acceder a ellos.
+  included_files = ["plantilla_informe.docx", "templates/**"]
 
 [[redirects]]
   from = "/*"

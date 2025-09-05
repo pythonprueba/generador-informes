@@ -5,7 +5,10 @@ import io
 from pathlib import Path
 from docxtpl import DocxTemplate
  
-app = Flask(__name__)
+# Le decimos a Flask dónde encontrar la carpeta 'templates', que ahora está
+# incluida dentro del paquete de la función gracias a 'included_files'.
+template_dir = Path(__file__).parent / 'templates'
+app = Flask(__name__, template_folder=template_dir)
 
 def generar_informe_docx(context):
     """
