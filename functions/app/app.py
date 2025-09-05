@@ -1,8 +1,11 @@
 from flask import Flask, render_template, request, send_file
 from generar_informe import generar_informe_docx
 import datetime
-
-app = Flask(__name__)
+ 
+# Le indicamos a Flask que la carpeta 'templates' está en el directorio raíz del proyecto,
+# un nivel por encima de donde se encuentra este script (functions/app/).
+# Esto es necesario para que Netlify Functions encuentre el index.html.
+app = Flask(__name__, template_folder='../../templates')
 
 @app.route('/')
 def index():
