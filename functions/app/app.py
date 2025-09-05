@@ -3,10 +3,11 @@ from generar_informe import generar_informe_docx
 import datetime
 import os
  
-# En el entorno de Netlify, necesitamos una ruta más robusta.
-# LAMBDA_TASK_ROOT es una variable de entorno que apunta a la raíz de la función.
-# Desde ahí, construimos la ruta a la carpeta 'templates' en la raíz del sitio.
-template_dir = os.path.abspath(os.path.join(os.environ.get('LAMBDA_TASK_ROOT', '.'), 'templates'))
+# En el entorno de Netlify, necesitamos una ruta más robusta para encontrar los templates.
+# La variable de entorno LAMBDA_TASK_ROOT apunta a la raíz donde se ejecuta la función.
+# Desde ahí, podemos construir la ruta a la carpeta 'templates' que está en la raíz del sitio.
+src_path = os.environ.get('LAMBDA_TASK_ROOT', os.path.dirname(__file__))
+template_dir = os.path.join(src_path, '..', '..', 'templates')
 app = Flask(__name__, template_folder=template_dir)
 
 @app.route('/')
