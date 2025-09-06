@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Generador de Informes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body>
+    <h1>Generador de Informes</h1>
+    <form action="/generar" method="POST">
+      <label>Nombre: <input name="nombre" required></label><br>
+      <label>RUN: <input name="run"></label><br>
+      <label>Fecha de nacimiento: <input type="date" name="fecnac"></label><br>
+      <label>Tipo de examen:
+        <select name="tipo_examen">
+          <option>TC</option><option>RM</option>
+        </select>
+      </label><br>
+      <label>Región:
+        <select name="region_examen">
+          <option>Cerebral</option><option>Cervical</option>
+        </select>
+      </label><br>
+      <label>Antecedentes:<br><textarea name="antecedentes"></textarea></label><br>
+      <label>Hallazgos:<br><textarea name="hallazgos"></textarea></label><br>
+      <label>Conclusión:<br><textarea name="conclusion"></textarea></label><br>
+      <button type="submit">Generar DOCX</button>
+    </form>
+  </body>
+</html>
