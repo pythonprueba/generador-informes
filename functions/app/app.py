@@ -1,19 +1,62 @@
 from flask import Flask, render_template, request, send_file
-from generar_informe import generar_informe_docx
 import datetime
+import io
+import os
+from pathlib import Path
+from docxtpl import DocxTemplate
+import traceback
 
-# Le indicamos a Flask que la carpeta 'templates' está en el directorio raíz del proyecto,
-# un nivel por encima de donde se encuentra este script (functions/app/).
-# Esto es necesario para que Netlify Functions encuentre el index.html.
+# --- CONFIGURACIÓN ROBUSTA PARA NETLIFY ---
+# La carpeta 'templates' y la plantilla .docx se incluyen en el paquete de la función.
+# Usamos pathlib para construir rutas relativas al script actual, lo que siempre funciona.
+base_path = Path(__file__).parent
+template_dir = base_path / 'templates'
+app = Flask(__name__, template_folder=template_dir)
 
-# ---- CORRECCIÓN AQUÍ ----
-app = Flask(__name__, template_folder='../templates')
-# -------------------------
+def generar_informe_docx(context):
+    """Genera un informe .docx en memoria a partir de un contexto."""
+    try:
+        plantilla_path = base_path / "plantilla_informe.docx"
+        doc = DocxTemplate(plantilla_path)
 
-@app.route('/')
-def index():
-    """Muestra el formulario web."""
-    return render_template('index.html')
+        hoy = datetime.date.today()
+        context['fecha_actual'] = hoy.strftime("%d-%m-%Y")
+        context['fecha_examen'] = hoy.strftime("%d-%m-%Y")
+
+        try:
+            fecnac_str = context.get('fecha_nacimiento', '')
+            if fecnac_str:
+                fecha_nacimiento = datetime.datetime.strptime(fecnac_str, "%Y-%m-%d").date()
+                edad = hoy.year - fecha_nacimiento.year - ((hoy.month, hoy.day) < (fecha_nacimiento.month, fecha_nacimiento.day))
+                context['edad'] = edad
+                context['fecha_nacimiento'] = fecha_nacimiento.strftime("%d-%m-%Y")
+            else:
+                context['edad'] = "N/A"
+        except (ValueError, AttributeError):
+            context['edad'] = "N/A"
+
+        doc.render(context)
+        file_stream = io.BytesIO()
+        doc.save(file_stream)
+        file_stream.seek(0)
+        return file_stream
+    except Exception as e:
+        # Imprime el error en los logs de la función de Netlify para depuración
+        print(f"ERROR al generar DOCX: {traceback.format_exc()}")
+        return None
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def catch_all(path):
+    """Maneja todas las peticiones GET para mostrar el formulario o depurar errores."""
+    if path == "generar":
+        return "Endpoint 'generar' solo acepta POST.", 405
+    try:
+        return render_template('index.html')
+    except Exception:
+        # Si render_template falla (ej. TemplateNotFound), devolvemos un error detallado.
+        error_html = f"<h1>Error al Cargar la Página</h1><p>No se pudo encontrar o renderizar 'index.html'. Revisa los logs de la función de Netlify.</p><pre>{traceback.format_exc()}</pre>"
+        return error_html, 500
 
 @app.route('/generar', methods=['POST'])
 def generar():
