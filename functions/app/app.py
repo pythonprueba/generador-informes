@@ -1,53 +1,15 @@
 from flask import Flask, render_template, request, send_file
+from generar_informe import generar_informe_docx
 import datetime
-import os
-import io
-from pathlib import Path
-from docxtpl import DocxTemplate
- 
-# Le decimos a Flask dónde encontrar la carpeta 'templates', que ahora está
-# incluida dentro del paquete de la función gracias a 'included_files'.
-template_dir = Path(__file__).parent / 'templates'
-app = Flask(__name__, template_folder=template_dir)
 
-def generar_informe_docx(context):
-    """
-    Genera un informe médico en formato .docx a partir de una plantilla
-    y un diccionario de contexto. Devuelve el documento en memoria.
-    """
-    try:
-        # La plantilla se incluye en el despliegue de la función,
-        # por lo que podemos acceder a ella con una ruta relativa.
-        plantilla_path = Path(__file__).parent / "plantilla_informe.docx"
-        doc = DocxTemplate(plantilla_path)
+# Le indicamos a Flask que la carpeta 'templates' está en el directorio raíz del proyecto,
+# un nivel por encima de donde se encuentra este script (functions/app/).
+# Esto es necesario para que Netlify Functions encuentre el index.html.
 
-        # Añadir datos dinámicos
-        hoy = datetime.date.today()
-        context['fecha_actual'] = hoy.strftime("%d-%m-%Y")
-        context['fecha_examen'] = hoy.strftime("%d-%m-%Y")
+# ---- CORRECCIÓN AQUÍ ----
+app = Flask(__name__, template_folder='../templates')
+# -------------------------
 
-        # Calcular y añadir la edad del paciente
-        try:
-            fecnac_str = context.get('fecha_nacimiento', '')
-            if fecnac_str:
-                fecha_nacimiento = datetime.datetime.strptime(fecnac_str, "%Y-%m-%d").date()
-                edad = hoy.year - fecha_nacimiento.year - ((hoy.month, hoy.day) < (fecha_nacimiento.month, fecha_nacimiento.day))
-                context['edad'] = edad
-                context['fecha_nacimiento'] = fecha_nacimiento.strftime("%d-%m-%Y")
-            else:
-                context['edad'] = "N/A"
-        except (ValueError, AttributeError):
-            context['edad'] = "N/A"
-
-        doc.render(context)
-        file_stream = io.BytesIO()
-        doc.save(file_stream)
-        file_stream.seek(0)
-        return file_stream
-    except Exception as e:
-        print(f"Error al generar el documento: {e}")
-        return None
- 
 @app.route('/')
 def index():
     """Muestra el formulario web."""
